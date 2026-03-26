@@ -21,6 +21,13 @@ class JobOut(BaseModel):
     country: str | None
 
 
+def _build_prefix_query(q: str) -> str:
+    """Convert user input to a prefix tsquery: 'soft eng' → 'soft:* & eng:*'"""
+    import re
+    words = [w for w in re.split(r"\s+", q.strip()) if w]
+    return " & ".join(f"{re.sub(r'[^a-zA-Z0-9äöåÄÖÅ]', '', w)}:*" for w in words if w)
+
+
 @app.get("/jobs", response_model=list[JobOut])
 def list_jobs(
     q: str | None = Query(None, description="Full-text search"),
@@ -36,10 +43,10 @@ def list_jobs(
 
     if q:
         filters.append(
-            "to_tsvector('english', title || ' ' || COALESCE(description, '')) "
-            "@@ websearch_to_tsquery('english', %(q)s)"
+            "to_tsvector('simple', title || ' ' || company || ' ' || COALESCE(location, '') || ' ' || COALESCE(description, '')) "
+            "@@ to_tsquery('simple', %(tsquery)s)"
         )
-        params["q"] = q
+        params["tsquery"] = _build_prefix_query(q)
     if company:
         filters.append("company ILIKE %(company)s")
         params["company"] = f"%{company}%"

@@ -1,0 +1,32 @@
+[project]
+name = "joblen-retriever"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "psycopg2-binary>=2.9",
+    "beautifulsoup4>=4.12",
+    "python-dotenv>=1.0",
+    "fastapi>=0.135.2",
+    "uvicorn>=0.42.0",
+    "httpx>=0.28.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+joblen-run = "joblen_retriever.__main__:main"
+joblen-api = "joblen_retriever.server:serve"
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[tool.ruff]
+line-length = 100

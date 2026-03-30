@@ -2,6 +2,11 @@
 
 A job search aggregator for tech roles in Finland and beyond. Scrapes multiple job boards into a single PostgreSQL database and surfaces them through a clean, fast search UI.
 
+<p align="center">
+  <img src="joblen.png" width="720" alt="Joblen UI" />
+  <br/><em>Frontend UI</em>
+</p>
+
 ## What it does
 
 - Aggregates tech job listings from Finnish and international job boards

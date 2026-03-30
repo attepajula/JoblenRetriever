@@ -68,6 +68,19 @@ export function JobDetail({ job, onClose }: Props) {
             </div>
           )}
 
+          <div className="mb-5">
+            {job.description ? (
+              <p className="text-sm text-[#6b6560] leading-relaxed whitespace-pre-line">
+                {job.description}
+              </p>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-greige-200 px-5 py-6 text-center">
+                <p className="text-sm font-medium text-greige-400">We'd love to show you a description</p>
+                <p className="text-xs text-greige-300 mt-1">but things are a bit sideways on that front. Head over to the listing for the full picture.</p>
+              </div>
+            )}
+          </div>
+
           <a
             href={job.url}
             target="_blank"

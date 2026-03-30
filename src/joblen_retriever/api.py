@@ -14,6 +14,7 @@ class JobOut(BaseModel):
     company: str
     location: str | None
     url: str
+    description: str | None
     tags: list[str]
     salary_range: str | None
     posted_at: datetime | None
@@ -28,7 +29,12 @@ def _build_prefix_query(q: str) -> str:
     return " & ".join(f"{re.sub(r'[^a-zA-Z0-9äöåÄÖÅ]', '', w)}:*" for w in words if w)
 
 
-@app.get("/jobs", response_model=list[JobOut])
+class JobsResponse(BaseModel):
+    items: list[JobOut]
+    total: int
+
+
+@app.get("/jobs", response_model=JobsResponse)
 def list_jobs(
     q: str | None = Query(None, description="Full-text search"),
     company: str | None = Query(None),
@@ -62,7 +68,8 @@ def list_jobs(
 
     where = ("WHERE " + " AND ".join(filters)) if filters else ""
     sql = f"""
-        SELECT id, title, company, location, url, tags, salary_range, posted_at, scraped_at, country
+        SELECT id, title, company, location, url, description, tags, salary_range, posted_at, scraped_at, country,
+               COUNT(*) OVER() AS total
         FROM jobs
         {where}
         ORDER BY posted_at DESC NULLS LAST
@@ -73,7 +80,10 @@ def list_jobs(
     try:
         with get_cursor(conn) as cur:
             cur.execute(sql, params)
-            return [dict(row) for row in cur.fetchall()]
+            rows = cur.fetchall()
+            total = rows[0]["total"] if rows else 0
+            items = [{k: v for k, v in row.items() if k != "total"} for row in rows]
+            return {"items": items, "total": total}
     finally:
         conn.close()
 
@@ -84,7 +94,7 @@ def get_job(job_id: int):
     try:
         with get_cursor(conn) as cur:
             cur.execute(
-                "SELECT id, title, company, location, url, tags, salary_range, posted_at, scraped_at, country "
+                "SELECT id, title, company, location, url, description, tags, salary_range, posted_at, scraped_at, country "
                 "FROM jobs WHERE id = %s",
                 (job_id,),
             )

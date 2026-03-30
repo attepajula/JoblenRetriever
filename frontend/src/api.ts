@@ -1,6 +1,6 @@
-import type { Job, JobFilters } from './types'
+import type { Job, JobFilters, JobsResponse } from './types'
 
-export async function fetchJobs(filters: JobFilters): Promise<Job[]> {
+export async function fetchJobs(filters: JobFilters): Promise<JobsResponse> {
   const params = new URLSearchParams()
   if (filters.q)        params.set('q', filters.q)
   if (filters.company)  params.set('company', filters.company)

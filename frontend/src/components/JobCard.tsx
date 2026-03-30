@@ -33,6 +33,10 @@ export function JobCard({ job, onClick }: Props) {
         </span>
       </div>
 
+      {job.description && (
+        <p className="text-xs text-greige-300 mt-2 leading-relaxed line-clamp-2">{job.description}</p>
+      )}
+
       <div className="flex items-center gap-3 mt-3 text-xs text-greige-400">
         {job.location && (
           <span className="flex items-center gap-1">

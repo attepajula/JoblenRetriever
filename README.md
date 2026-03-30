@@ -65,6 +65,8 @@ cd frontend && npm install && npm run dev
 
 API runs at `http://127.0.0.1:8000`, frontend at `http://localhost:5173`.
 
+**Please contact atte@atte.works for crawler source code**
+
 ## Project structure
 
 ```
